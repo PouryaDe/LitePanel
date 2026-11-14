@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VPN Lite</title>
+<style>
+:root{--bg:#eef1fb;--card:#fff;--tx:#1b2140;--mu:#6a7394;--bd:#e2e6f5;--pr:#6366f1;--pr2:#8b5cf6;--ok:#10b981;--wa:#f59e0b;--er:#ef4444;--cy:#06b6d4;--pk:#ec4899;--side1:#1e1b4b;--side2:#312e81;--sidetx:#c7d2fe;--sh:0 4px 18px rgba(79,70,229,.08)}
+[data-theme=dark]{--bg:#0e1020;--card:#171a31;--tx:#e8eaf8;--mu:#8e96bd;--bd:#262b4d;--pr:#818cf8;--pr2:#a78bfa;--side1:#0a0b1a;--side2:#16183a;--sh:0 4px 18px rgba(0,0,0,.35)}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,Segoe UI,Tahoma,sans-serif;background:var(--bg);color:var(--tx)}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:flex;min-height:100vh}.side{width:224px;background:linear-gradient(180deg,var(--side1),var(--side2));color:var(--sidetx);padding:18px 10px;flex:none;position:sticky;top:0;height:100vh;overflow:auto}
+.side h1{font-size:19px;margin:2px 10px 18px;color:#fff;display:flex;align-items:center;gap:9px}.side h1 i{font-style:normal;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--pr),var(--pk));display:grid;place-items:center;font-size:17px}
+.side a{display:flex;gap:11px;align-items:center;padding:10px 12px;margin-bottom:3px;color:var(--sidetx);cursor:pointer;border-radius:10px;transition:.15s}
+.side a b{width:22px;text-align:center;font-weight:400;font-size:16px}
+.side a:hover{background:rgba(255,255,255,.08);color:#fff}.side a.on{background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.45)}
+.side hr{border:0;border-top:1px solid rgba(255,255,255,.1);margin:10px 4px}
+.main{flex:1;min-width:0;padding:22px 26px}.top{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}.top h2{margin:0;flex:1;font-size:21px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.dg{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);margin-bottom:14px}
+.side a,.mob a,button,.btn,.dc,.stat,.ib,.pill,.tag,th,h1,h2,h3,label{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}input,textarea,select{-webkit-user-select:text;user-select:text}
+.sw{appearance:none;-webkit-appearance:none;width:42px;height:24px;border-radius:12px;background:#94a3b8;position:relative;cursor:pointer;transition:background .15s;border:0;flex:none;vertical-align:middle}.sw:after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:inset-inline-start .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}.sw:checked{background:#10b981}.sw:checked:after{inset-inline-start:21px}
+.ops{white-space:nowrap}.ib{display:inline-flex;flex-direction:column;align-items:center;gap:1px;min-width:44px;padding:3px 4px;margin:0 1px;background:none;border:1px solid transparent;border-radius:8px;color:inherit;cursor:pointer}.ib:hover{background:rgba(99,102,241,.1);border-color:var(--bd,rgba(99,102,241,.3))}.ib .ic{font-size:16px;line-height:1.2}.ib .lb{font-size:10px;color:var(--mu)}.ib.off{opacity:.35}.ib.d .lb,.ib.d{color:var(--er)}
+.lk{cursor:pointer;transition:transform .12s}.lk:hover{transform:translateY(-2px)}.dc{padding:12px;margin:0;min-width:0}.dh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.di{font-size:18px}.dl{font-size:12px;color:var(--mu);flex:1}
+.dv{font-size:20px;font-weight:700;color:var(--c)}.dm{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}.d2{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-top:6px;gap:4px;flex-wrap:wrap}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));margin-bottom:14px}
+.stat{position:relative;overflow:hidden;padding-inline-start:20px}.stat:before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:5px;background:var(--c,var(--pr))}
+.stat b{display:block;font-size:25px;margin-top:22px;text-align:start;color:var(--c,var(--pr))}.stat span{color:var(--mu);font-size:12.5px}.stat em{position:absolute;inset-inline-end:12px;top:8px;font-style:normal;font-size:22px;opacity:.9}
+.btn{border:1px solid var(--bd);background:var(--card);padding:7px 14px;border-radius:9px;cursor:pointer;transition:.15s}.btn:hover{border-color:var(--pr);color:var(--pr)}
+.btn.p{background:linear-gradient(135deg,var(--pr),var(--pr2));border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(99,102,241,.35)}.btn.p:hover{color:#fff;filter:brightness(1.08)}
+.btn.d{color:var(--er)}.btn.d:hover{border-color:var(--er);color:var(--er)}.btn.s{padding:3px 9px;font-size:12px}
+input,select,textarea{border:1px solid var(--bd);background:var(--card);padding:7px 10px;border-radius:9px;max-width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--pr);box-shadow:0 0 0 3px rgba(99,102,241,.18)}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 10px;text-align:start;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{font-size:12px;color:var(--mu);font-weight:600;background:rgba(99,102,241,.05)}tr:hover td{background:rgba(99,102,241,.06)}.sc{overflow-x:auto}
+.pill{padding:2px 10px;border-radius:99px;font-size:12px;color:#fff;background:var(--mu)}.pill.active{background:var(--ok)}.pill.expired,.pill.depleted{background:var(--er)}.pill.disabled{background:var(--mu)}
+.bar{height:7px;background:var(--bd);border-radius:5px;min-width:90px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--pr))}.bar.hi i{background:linear-gradient(90deg,var(--wa),var(--er))}
+.tag{display:inline-block;padding:1px 9px;border-radius:7px;background:rgba(99,102,241,.14);color:var(--pr);font-size:12px;margin-inline-end:3px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-inline-end:5px;box-shadow:0 0 0 3px rgba(16,185,129,.2)}
+.modal{position:fixed;inset:0;background:rgba(15,15,40,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:30px 12px;overflow:auto;z-index:9}
+.modal .card{width:min(580px,100%)}.row{display:flex;gap:10px;margin-bottom:10px;align-items:center;flex-wrap:wrap}.row label{width:130px;color:var(--mu);font-size:13px}
+.row input,.row select{flex:1;min-width:120px}.dt{display:flex;flex-wrap:wrap;gap:5px;align-items:center}.row .dt select,.row .dt input{flex:none;min-width:0;width:auto;padding-inline:6px}.row .dt input[type=number]{width:64px}.dt .unl{width:auto;display:inline-flex;gap:4px;align-items:center;color:inherit;margin-inline-start:6px}.row input[type=checkbox]{flex:none;min-width:0;width:auto}.bar-sel{background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;padding:9px 14px;border-radius:11px;margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.toast{position:fixed;bottom:18px;inset-inline-end:18px;background:#1e1b4b;color:#fff;padding:11px 18px;border-radius:11px;z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.3)}.toast.er{background:var(--er)}
+body.lg{background:radial-gradient(circle at 20% 15%,#6366f1 0,transparent 45%),radial-gradient(circle at 85% 85%,#ec4899 0,transparent 45%),#1e1b4b}
+.login{max-width:350px;margin:13vh auto;padding:28px;text-align:center}.login input{width:100%;margin-bottom:12px}.login h2{margin:0 0 4px}.login .lo{font-size:38px}.login p{margin:0 0 18px;color:var(--mu)}
+.pg{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:12px}.mu{color:var(--mu)}
+@media(max-width:760px){.side{display:none}.mob{display:flex!important}.main{padding:12px}}
+.mob{display:none;gap:6px;overflow:auto;margin-bottom:12px}.mob a{padding:7px 14px;border:1px solid var(--bd);border-radius:10px;white-space:nowrap;background:var(--card)}.mob a.on{background:linear-gradient(135deg,var(--pr),var(--pr2));border-color:transparent;color:#fff}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block}
+pre{background:rgba(99,102,241,.08);padding:12px;border-radius:10px;overflow:auto;white-space:pre-wrap;word-break:break-all;border:1px dashed var(--bd)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+"use strict";
+const BASE = location.pathname.replace(/[^\/]*$/, "");
+const T = {
+ en:{dash:"Dashboard",accounts:"Accounts",inbounds:"Inbounds",online:"Online",logs:"Logs",settings:"Settings",login:"Sign in",user:"Username",pass:"Password",
+  add:"Add account",bulkc:"Bulk create",search:"Search…",all:"All",active:"Active",expired:"Expired",depleted:"Depleted",disabled:"Disabled",save:"Save",cancel:"Cancel",
+  del:"Delete",edit:"Edit",reset:"Reset traffic",kick:"Kick",enable:"Enable",disable:"Disable",extend:"Extend",used:"Total usage (lifetime)",expiry:"Expiry",devices:"Devices",speed:"Speed",
+  routing:"Routing",irandirect:"Iran direct (bypass the tunnel)",iranhelp:"When on, OpenVPN and Cisco clients (any app) reach Iranian IP ranges directly instead of through the tunnel; everything else still goes through it. Cisco gets the largest Iranian ranges (about 84% of Iranian addresses) as plain routes; OpenVPN gets the full list. L2TP is not affected (it cannot receive routes from the server). Saving restarts the OpenVPN and Cisco services once, which drops connected users for a moment.",notonline:"This user is not connected right now",kicked:"Disconnected sessions",delq:"Delete this account permanently?",resetshort:"Reset usage",kickshort:"Disconnect",resetq:"Reset this account's used traffic to zero?",  offline:"Offline",info:"Info",link:"Link",disk:"Disk",usertraffic:"Users traffic",servertraffic:"Server traffic",disabled:"Disabled",  rx:"Received (total)",tx:"Sent (total)",killall:"Kill all",ips:"IP",nsess:"Count",  status:"Status",email:"Name / email",total:"Quota (GB, 0=∞)",days:"Days (0=∞)",hours:"Extra hours (e.g. 2 for a 2-hour test)",fromnow:"From now:",unlimited:"Unlimited",kernl2tp:"Kernel mode (faster)",kernl2tph:"Much faster L2TP. Only turn it on when the relay gives every customer an address of their own; behind a relay that shows everyone with one address it breaks L2TP/IPsec. Changing it restarts the L2TP service: connected L2TP users reconnect once.",limit:"Simultaneous connections, all protocols together (0 = panel default)",down:"Download KB/s (0=∞)",up:"Upload KB/s (0=∞)",
+  comment:"Comment",resetd:"Auto reset (days)",protocols:"Services",sel:"selected",confirm:"Are you sure?",saved:"Saved",never:"never",left:"left",unl:"∞",
+  page:"Page",of:"of",sessions:"Sessions",onlineu:"Online users",cpu:"CPU",mem:"Memory",net:"Network",members:"accounts",port:"Port",remark:"Name",proto:"Protocol",
+  gen:"Generate certificates",rxtx:"Received / sent (all time)",totalused:"Total usage (all time)",totalin:"Services",users:"Users",ops:"Operations",resetaccts:"Reset usage of all accounts",resetsvc:"Reset the traffic counters of all services",addr:"Connection address",traffic:"Traffic",deflimit:"Default simultaneous connections per account",allowmulti:"Allow several protocols at the same time (off = while connected on one protocol, another is refused)",rsttotal:"Reset total usage",rstq:"Reset the server total usage counter to zero? Accounts keep their own usage.",delexp:"Delete expired",delexpq:"Delete {n} expired accounts permanently?",noexp:"No expired accounts",uptime:"Uptime",ver:"Version",update:"Update panel",reboot:"Reboot server",rebootq:"Reboot the whole server? All VPN connections drop for a minute.",rebooting:"Rebooting…",uptodate:"Already up to date",updq:"Update panel",updating:"Downloading update…",getssl:"Get SSL for connection domain (optional)",sslwait:"Requesting certificate from Let's Encrypt, up to a minute…",condomreq:"Enter the connection domain first",newin:"Add inbound",count:"How many",prefix:"Prefix",created:"Created",copy:"Copy",time:"Time",kind:"Kind",detail:"Detail",
+  strategy:"When the device limit is full",evict:"Disconnect the oldest device",reject:"Refuse the new login",grace:"Never evict a session younger than (sec)",
+  chpw:"Change password",domreq:"Connection domain is required for Cisco (the SSL certificate is issued for it)",certwait:"Getting the SSL certificate...",certget:"SSL certificate for",certsave:"✓ Save the service",certsaveanyway:"Save anyway (self-signed certificate)",back:"Back",bk:"Backup & restore",tgb:"Automatic backup to Telegram",tgbhelp:"Create a bot with @BotFather, send it any message, then enter its token and your numeric chat id. The panel sends the backup file every N hours (0 = off). Use a bot of your own, not the sales bot.",tgtoken:"Bot token",tgchat:"Chat id (your numeric id)",tghours:"Send every (hours, 0 = off)",tgnow:"Send a backup now",tglogin:"Message me on every panel login",tgcpu:"CPU alert above % (0 = off)",tgsent:"Backup sent to Telegram",bkhelp:"Download everything (services, accounts, usage) as one file, or restore it on this or another server. Panel login/port/certificate are kept.",restore:"Restore from file",restoreconf:"Replace ALL current accounts and services with the ones in this file?",imp:"Import from old panel (vpn-ui)",imphelp:"Moves services and accounts directly from a running vpn-ui panel. The old panel is only read, never changed.",impurl:"Old panel address (with base path)",pass:"Password",shift:"Add to every port (to run side by side)",impen:"Create services enabled",impreq:"Address, username and password are required",impgo:"Import now",oldpw:"Current password",newpw:"New password (8+)",backup:"Download backup",restart:"Restart panel",tls:"HTTPS certificate path",tlsk:"HTTPS key path",
+  basep:"Base path",adv:"Advanced settings (JSON)",lang:"فارسی",theme:"Theme",logout:"Sign out",sort:"Sort",name:"Name",lastseen:"Last seen",today:"Used today",dns:"DNS",mtu:"MTU",
+  portudp:"OpenVPN UDP port",porttcp:"OpenVPN TCP port",useudp:"UDP enabled",usetcp:"TCP enabled",portoc:"Cisco port (TCP + UDP)",portl2:"L2TP port",ipsecon:"IPsec enabled (phones)",condom:"Connection domain/IP (given to clients)",psk:"IPsec pre-shared key",pskreq:"Enter the IPsec pre-shared key (or turn IPsec off)",ipsec:"IPsec PSK (phones)",pool:"Tunnel pool",udp:"UDP",tcp:"TCP",tcpport:"TCP port",ext:"Server address for clients",sub:"Config",listen:"Listen address",
+  full:"Device limit reached",none:"Nothing here yet",single:"One protocol at a time",singleh:"The account is served on all selected protocols, but can be connected through only one of them at a time.",defsingle:"Default for accounts created by the bot / API",allowners:"All owners",adminown:"Admin's own"},
+ fa:{dash:"داشبورد",accounts:"اکانت‌ها",inbounds:"سرویس‌ها",online:"آنلاین",logs:"لاگ",settings:"تنظیمات",login:"ورود",user:"نام کاربری",pass:"رمز",
+  add:"افزودن اکانت",bulkc:"ساخت گروهی",search:"جستجو…",all:"همه",active:"فعال",expired:"منقضی",depleted:"تمام‌شده",disabled:"غیرفعال",save:"ذخیره",cancel:"انصراف",
+  del:"حذف",edit:"ویرایش",reset:"ریست حجم",kick:"قطع",enable:"فعال",disable:"غیرفعال",extend:"تمدید",used:"مصرف کل (از ابتدا)",expiry:"انقضا",devices:"دستگاه",speed:"سرعت",
+  routing:"مسیریابی",irandirect:"ایران مستقیم (بدون تونل)",iranhelp:"وقتی روشن باشد، کاربران OpenVPN و Cisco (با هر برنامه‌ای) به آی‌پی‌های ایران مستقیم وصل می‌شوند و از تونل رد نمی‌شوند؛ بقیهٔ ترافیک مثل قبل از تونل می‌رود. در Cisco بزرگ‌ترین رنج‌های ایران (حدود ۸۴٪ آدرس‌های ایران) به‌صورت مسیر معمولی داده می‌شود و در OpenVPN لیست کامل. روی L2TP اثر ندارد (سرور نمی‌تواند به L2TP مسیر بدهد). ذخیره‌کردنش یک بار سرویس‌های OpenVPN و Cisco را ری‌استارت می‌کند و کاربران وصل برای چند لحظه قطع می‌شوند.",notonline:"این کاربر الان وصل نیست",kicked:"اتصال قطع شد",delq:"این اکانت برای همیشه حذف شود؟",resetshort:"ریست حجم",kickshort:"قطع اتصال",resetq:"حجم مصرف‌شدهٔ این اکانت صفر شود؟",  offline:"آفلاین",info:"اطلاعات",link:"لینک اتصال",disk:"هارد",usertraffic:"ترافیک کاربران",servertraffic:"ترافیک سرور",disabled:"غیرفعال",  rx:"دریافت کل",tx:"ارسال کل",killall:"قطع همه",ips:"آی‌پی",nsess:"تعداد",  status:"وضعیت",email:"نام / ایمیل",total:"حجم (گیگ، ۰=نامحدود)",days:"روز (۰=نامحدود)",hours:"ساعت (مثلاً ۲ برای اکانت تست دو ساعته)",fromnow:"از همین الان:",unlimited:"نامحدود",kernl2tp:"حالت کرنل (سریع‌تر)",kernl2tph:"سرعت L2TP خیلی بیشتر می‌شود. فقط وقتی روشنش کنید که سرور واسط به هر مشتری IP جدا می‌دهد؛ اگر همه با یک IP بیایند، L2TP با IPsec خراب می‌شود. تغییرش سرویس L2TP را ری‌استارت می‌کند و کاربران L2TP یک بار قطع و وصل می‌شوند.",limit:"تعداد اتصال همزمان، مجموع همه‌ی پروتکل‌ها (۰ = پیش‌فرض پنل)",down:"دانلود KB/s (۰=نامحدود)",up:"آپلود KB/s (۰=نامحدود)",
+  comment:"توضیح",resetd:"ریست خودکار (روز)",protocols:"سرویس‌ها",sel:"انتخاب‌شده",confirm:"مطمئنی؟",saved:"ذخیره شد",never:"هرگز",left:"مانده",unl:"∞",
+  page:"صفحه",of:"از",sessions:"اتصال‌ها",onlineu:"کاربر آنلاین",cpu:"پردازنده",mem:"حافظه",net:"شبکه",members:"اکانت",port:"پورت",remark:"نام",proto:"پروتکل",
+  gen:"ساخت گواهی",rxtx:"دریافت / ارسال کل (از ابتدا)",totalused:"مصرف کل (از ابتدا)",totalin:"سرویس‌ها",users:"کاربران",ops:"عملیات کلی",resetaccts:"ریست مصرف همه‌ی اکانت‌ها",resetsvc:"ریست شمارنده‌ی ترافیک همه‌ی سرویس‌ها",addr:"نشانی اتصال",traffic:"ترافیک",deflimit:"پیش‌فرض تعداد اتصال همزمان هر اکانت",allowmulti:"اجازه‌ی اتصال همزمان با چند پروتکل (خاموش = تا وقتی با یک پروتکل وصله، پروتکل دیگر وصل نمی‌شود)",rsttotal:"ریست مصرف کل",rstq:"شمارنده‌ی مصرف کل سرور صفر شود؟ مصرف هر اکانت دست نمی‌خورد.",delexp:"حذف منقضی‌ها",delexpq:"{n} اکانت منقضی برای همیشه حذف شود؟",noexp:"اکانت منقضی‌ای نیست",uptime:"آپ‌تایم",ver:"نسخه",update:"آپدیت پنل",reboot:"ریبوت سرور",rebootq:"کل سرور ریبوت شود؟ اتصال‌ها حدود یک دقیقه قطع می‌شود.",rebooting:"در حال ریبوت…",uptodate:"آخرین نسخه نصب است",updq:"آپدیت پنل",updating:"در حال دانلود آپدیت…",getssl:"دریافت SSL برای دامنه اتصال (اختیاری)",sslwait:"در حال دریافت گواهی از Let's Encrypt، تا یک دقیقه…",condomreq:"اول دامنه اتصال را وارد کنید",newin:"سرویس جدید",count:"تعداد",prefix:"پیشوند",created:"ساخته شد",copy:"کپی",time:"زمان",kind:"نوع",detail:"جزئیات",
+  strategy:"وقتی سقف دستگاه پر شد",evict:"قدیمی‌ترین دستگاه قطع شود",reject:"ورود جدید رد شود",grace:"سشن جوان‌تر از (ثانیه) قطع نشود",
+  chpw:"تغییر رمز",domreq:"برای Cisco دامنه اتصال اجباری است (گواهی SSL برای آن گرفته می‌شود)",certwait:"در حال گرفتن گواهی SSL...",certget:"گواهی SSL برای",certsave:"✓ ذخیره سرویس",certsaveanyway:"با این حال ذخیره کن (گواهی خودامضا)",back:"برگشت",bk:"بکاپ و بازیابی",tgb:"بکاپ خودکار در تلگرام",tgbhelp:"با @BotFather یک ربات بساز، یک پیام برایش بفرست، بعد توکن آن و آیدی عددی خودت را وارد کن. پنل هر N ساعت فایل بکاپ را می‌فرستد (۰ = خاموش). یک ربات جدا بساز، نه ربات فروش.",tgtoken:"توکن ربات",tgchat:"آیدی چت (آیدی عددی خودت)",tghours:"ارسال هر چند ساعت (۰ = خاموش)",tgnow:"همین حالا بکاپ بفرست",tglogin:"با هر ورود به پنل برایم پیام بفرست",tgcpu:"هشدار مصرف CPU بالای ٪ (۰ = خاموش)",tgsent:"بکاپ در تلگرام ارسال شد",bkhelp:"همه‌چیز (سرویس‌ها، اکانت‌ها، مصرف) را در یک فایل دانلود کن، یا روی همین سرور یا سرور دیگر بازیابی کن. یوزر/پورت/گواهی پنل عوض نمی‌شود.",restore:"بازیابی از فایل",restoreconf:"همه اکانت‌ها و سرویس‌های فعلی با محتوای این فایل جایگزین شوند؟",imp:"انتقال از پنل قدیمی (vpn-ui)",imphelp:"سرویس‌ها و اکانت‌ها را مستقیم از یک پنل vpn-ui در حال اجرا می‌آورد. پنل قدیمی فقط خوانده می‌شود و تغییری نمی‌کند.",impurl:"آدرس پنل قدیمی (با مسیر پایه)",pass:"رمز",shift:"اضافه شدن به هر پورت (برای اجرای هم‌زمان)",impen:"سرویس‌ها فعال ساخته شوند",impreq:"آدرس، یوزر و رمز لازم است",impgo:"انتقال بده",oldpw:"رمز فعلی",newpw:"رمز جدید (حداقل ۸)",backup:"دانلود بکاپ",restart:"ری‌استارت پنل",tls:"مسیر گواهی HTTPS",tlsk:"مسیر کلید HTTPS",
+  basep:"مسیر پایه",adv:"تنظیمات پیشرفته (JSON)",lang:"English",theme:"تم",logout:"خروج",sort:"مرتب‌سازی",name:"نام",lastseen:"آخرین اتصال",today:"مصرف امروز",dns:"DNS",mtu:"MTU",
+  portudp:"پورت UDP اوپن‌وی‌پی‌ان",porttcp:"پورت TCP اوپن‌وی‌پی‌ان",useudp:"UDP فعال",usetcp:"TCP فعال",portoc:"پورت سیسکو (TCP و UDP)",portl2:"پورت L2TP",ipsecon:"IPsec فعال (گوشی)",condom:"دامنه/آی‌پی اتصال (به کاربر داده می‌شود)",psk:"کلید IPsec (pre-shared key)",pskreq:"کلید IPsec رو وارد کن (یا IPsec رو خاموش کن)",ipsec:"کلید IPsec (گوشی)",pool:"محدوده تونل",udp:"UDP",tcp:"TCP",tcpport:"پورت TCP",ext:"آدرس سرور برای کاربران",sub:"کانفیگ",listen:"آدرس شنود",
+  full:"سقف دستگاه پر است",none:"چیزی نیست",single:"فقط با یک پروتکل همزمان",singleh:"اکانت روی همه‌ی پروتکل‌های انتخاب‌شده فعال است ولی هر لحظه فقط با یکی از آن‌ها می‌شود وصل بود.",defsingle:"پیش‌فرض برای اکانت‌هایی که ربات / API می‌سازد",allowners:"همه (مدیر و نمایندگان)",adminown:"اکانت‌های خود مدیر"}
+};
+let lang = localStorage.getItem("lang") || "fa", theme = localStorage.getItem("theme") || "light";
+const t = k => (T[lang] && T[lang][k]) || T.en[k] || k;
+function applyLook(){document.documentElement.dir=lang==="fa"?"rtl":"ltr";document.documentElement.lang=lang;document.documentElement.dataset.theme=theme}
+applyLook();
+
+function h(tag, attrs, ...kids){const e=document.createElement(tag);
+ for(const k in (attrs||{})){const v=attrs[k];if(v==null||v===false)continue;
+  if(k==="class")e.className=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else if(k==="value")e.value=v;else if(k==="checked")e.checked=!!v;else e.setAttribute(k,v===true?"":v)}
+ for(const c of kids.flat(9)){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e}
+const $root = document.getElementById("root");
+function toast(m,er){const e=h("div",{class:"toast"+(er?" er":"")},m);document.body.append(e);setTimeout(()=>e.remove(),3200)}
+async function api(path,opt){opt=opt||{};const r=await fetch(BASE+path.replace(/^\//,""),{credentials:"same-origin",...opt});
+ if(r.status===401||r.status===404){showLogin();throw new Error("auth")}
+ const ct=r.headers.get("content-type")||"";if(!ct.includes("json"))return r;const j=await r.json();return j}
+async function call(path,opt){const j=await api(path,opt);if(!j.success){toast(j.msg||"error",1);throw new Error(j.msg)}return j.obj}
+const post=(p,body)=>call(p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body||{})});
+const form=(p,o)=>api(p,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(o).toString()});
+function fmtB(n){n=+n||0;const u=["B","KB","MB","GB","TB"];let i=0;while(n>=1024&&i<4){n/=1024;i++}return (n>=100||i===0?n.toFixed(0):n.toFixed(1))+" "+u[i]}
+function fmtExp(ms){if(!ms)return t("unl");const d=(ms-Date.now())/864e5;return d<0?t("expired"):(d<1?Math.max(1,Math.round(d*24))+"h ":Math.ceil(d)+"d ")+t("left")}
+function ago(ms){if(!ms)return t("never");const s=(Date.now()-ms)/1000;return s<90?Math.round(s)+"s":s<5400?Math.round(s/60)+"m":s<172800?Math.round(s/3600)+"h":Math.round(s/86400)+"d"}
+function fmtDate(ms){return new Date(ms).toLocaleString(lang==="fa"?"fa-IR":"en-GB",{year:"numeric",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}
+// ---- Jalali (Persian) calendar, after jalaali-js: day numbers <-> Jalali / Gregorian dates
+const jdiv=(a,b)=>~~(a/b),jmod=(a,b)=>a-~~(a/b)*b;
+function jalCal(jy){const br=[-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];let gy=jy+621,lj=-14,jp=br[0],jm,jump=0,n;
+ for(let i=1;i<br.length;i++){jm=br[i];jump=jm-jp;if(jy<jm)break;lj+=jdiv(jump,33)*8+jdiv(jmod(jump,33),4);jp=jm}
+ n=jy-jp;lj+=jdiv(n,33)*8+jdiv(jmod(n,33)+3,4);if(jmod(jump,33)===4&&jump-n===4)lj++;
+ const lg=jdiv(gy,4)-jdiv((jdiv(gy,100)+1)*3,4)-150;if(jump-n<6)n=n-jump+jdiv(jump+4,33)*33;let leap=jmod(jmod(n+1,33)-1,4);if(leap===-1)leap=4;
+ return{leap,gy,march:20+lj-lg}}
+function g2d(gy,gm,gd){let d=jdiv((gy+jdiv(gm-8,6)+100100)*1461,4)+jdiv(153*jmod(gm+9,12)+2,5)+gd-34840408;return d-jdiv(jdiv(gy+100100+jdiv(gm-8,6),100)*3,4)+752}
+function d2g(j){let x=4*j+139361631;x=x+jdiv(jdiv(4*j+183187720,146097)*3,4)*4-3908;const i=jdiv(jmod(x,1461),4)*5+308,gd=jdiv(jmod(i,153),5)+1,gm=jmod(jdiv(i,153),12)+1;return{gy:jdiv(x,1461)-100100+jdiv(8-gm,6),gm,gd}}
+function j2d(jy,jm,jd){const r=jalCal(jy);return g2d(r.gy,3,r.march)+(jm-1)*31-jdiv(jm,7)*(jm-7)+jd-1}
+function d2j(j){const gy=d2g(j).gy;let jy=gy-621;const r=jalCal(jy);let k=j-g2d(gy,3,r.march);
+ if(k>=0){if(k<=185)return{jy,jm:1+jdiv(k,31),jd:jmod(k,31)+1};k-=186}else{jy--;k+=179;if(r.leap===1)k++}
+ return{jy,jm:7+jdiv(k,30),jd:jmod(k,30)+1}}
+// the calendar of the UI language: Persian dates in Persian, Gregorian otherwise (local time)
+const JMN=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"],GMN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const cal={parts(ms){const d=new Date(ms),y=d.getFullYear(),m=d.getMonth()+1,dd=d.getDate();if(lang!=="fa")return{y,m,d:dd,H:d.getHours(),M:d.getMinutes()};const j=d2j(g2d(y,m,dd));return{y:j.jy,m:j.jm,d:j.jd,H:d.getHours(),M:d.getMinutes()}},
+ ms(y,m,d,H,M){if(lang!=="fa")return new Date(y,m-1,d,H,M).getTime();const g=d2g(j2d(y,m,d));return new Date(g.gy,g.gm-1,g.gd,H,M).getTime()},
+ mlen(y,m){return lang!=="fa"?new Date(y,m,0).getDate():(m<=6?31:m<=11?30:(jalCal(y).leap===0?30:29))},mname(m){return lang==="fa"?JMN[m-1]:GMN[m-1]}};
+const num=n=>lang==="fa"?(+n).toLocaleString("fa-IR",{useGrouping:false}):String(n),pad2=n=>num(String(n).padStart(2,"0")).padStart(2,num(0));
+function leftText(ms){if(!ms)return t("unl");let s=Math.round((ms-Date.now())/6e4);if(s<=0)return t("expired");const d=Math.floor(s/1440),hh=Math.floor(s%1440/60),mi=s%60;
+ return lang==="fa"?[d?num(d)+" روز":"",hh?num(hh)+" ساعت":"",!d&&mi?num(mi)+" دقیقه":""].filter(Boolean).join(" و ")+" مانده":[d?d+"d":"",hh?hh+"h":"",!d&&mi?mi+"m":""].filter(Boolean).join(" ")+" left"}
+// expiryEditor: the exact date and time (calendar of the UI language), "from now" days/hours,
+// quick +/- buttons and "unlimited". value() is unix ms, 0 = unlimited.
+function expiryEditor(init){let exp=init||0;const HR=36e5;
+ const sl=(n,f)=>{const e=h("select",{});for(let i=0;i<n;i++){const o=f(i);e.append(h("option",{value:o[0]},o[1]))}return e};
+ const yNow=cal.parts(Date.now()).y,ys=[];for(let y=yNow-1;y<=yNow+5;y++)ys.push(y);
+ const Y=h("select",{},ys.map(y=>h("option",{value:y},num(y)))),Mo=sl(12,i=>[i+1,cal.mname(i+1)]),D=h("select",{}),H=sl(24,i=>[i,pad2(i)]),Mi=sl(60,i=>[i,pad2(i)]);
+ const unl=h("input",{type:"checkbox"}),sum=h("div",{class:"mu",style:"margin-top:4px"});
+ const dIn=h("input",{type:"number",min:0,step:"any",placeholder:"0"}),hIn=h("input",{type:"number",min:0,step:"any",placeholder:"0"});
+ const fillDays=(y,m,keep)=>{const n=cal.mlen(y,m);D.replaceChildren(...Array.from({length:n},(_,i)=>h("option",{value:i+1},num(i+1))));D.value=Math.min(keep||1,n)};
+ const show=()=>{const p=cal.parts(exp||Date.now()+30*24*HR);if(!ys.includes(p.y)){Y.prepend(h("option",{value:p.y},num(p.y)))}Y.value=p.y;Mo.value=p.m;fillDays(p.y,p.m,p.d);H.value=p.H;Mi.value=p.M;
+  unl.checked=!exp;[Y,Mo,D,H,Mi].forEach(e=>e.disabled=!exp);sum.textContent=exp?fmtDate(exp)+" — "+leftText(exp):t("unl")};
+ const fromSel=()=>{exp=cal.ms(+Y.value,+Mo.value,+D.value,+H.value,+Mi.value);dIn.value=hIn.value="";show()};
+ [Y,Mo].forEach(e=>e.addEventListener("change",()=>{fillDays(+Y.value,+Mo.value,+D.value);fromSel()}));[D,H,Mi].forEach(e=>e.addEventListener("change",fromSel));
+ unl.addEventListener("change",()=>{exp=unl.checked?0:Date.now()+30*24*HR;dIn.value=hIn.value="";show()});
+ const fromNow=()=>{const x=(+dIn.value||0)*24+(+hIn.value||0);if(x>0){exp=Date.now()+x*HR;show()}};dIn.addEventListener("input",fromNow);hIn.addEventListener("input",fromNow);
+ const step=x=>()=>{const base=exp&&exp>Date.now()?exp:Date.now();exp=Math.max(Date.now(),base+x*HR);dIn.value=hIn.value="";show()};
+ const L=lang==="fa"?{h:"ساعت",d:"روز"}:{h:"h",d:"d"},chip=(x,n,u)=>h("button",{type:"button",class:"btn s",onclick:step(x)},(x<0?"−":"+")+num(n)+" "+u);
+ show();
+ const el=h("div",{class:"exped",style:"flex:1"},
+  h("div",{class:"dt"},h("span",{class:"dt"},lang==="fa"?[D,Mo,Y]:[Y,Mo,D]),h("span",{class:"dt",dir:"ltr"},H,":",Mi),h("label",{class:"unl"},unl," ",t("unlimited"))),sum,
+  h("div",{class:"dt",style:"margin-top:6px"},h("span",{class:"mu"},t("fromnow")),dIn,h("span",{class:"mu"},L.d),hIn,h("span",{class:"mu"},L.h)),
+  h("div",{class:"dt",style:"margin-top:6px"},chip(1,1,L.h),chip(2,2,L.h),chip(24,1,L.d),chip(24*7,7,L.d),chip(24*30,30,L.d),chip(-1,1,L.h),chip(-24,1,L.d)));
+ return{el,value:()=>exp}}
+
+let page="dash",timer=null,inboundsCache=[],booted=false;
+// ME is who is logged in (whoami of the agency module): role "admin" or "agent". agency.js adds
+// the agency pages and replaces the admin pages an agency must not see.
+let ME={role:"admin"},AGN={};
+let PAGES=["dash","accounts","inbounds","online","logs","settings"];const ICON={dash:"📊",accounts:"👥",inbounds:"🔌",online:"🟢",logs:"📜",settings:"⚙️"};
+const PAGEFN={dash:pDash,accounts:pAccounts,inbounds:pInbounds,online:pOnline,logs:pLogs,settings:pSettings};
+const hashPage=()=>{const k=decodeURIComponent(location.hash.replace(/^#\/?/,"")).split("?")[0];return PAGES.includes(k)?k:PAGES[0]};
+page=hashPage();
+function go(k){if(hashPage()===k&&location.hash){page=k;render()}else location.hash="#/"+k}
+addEventListener("hashchange",()=>{const k=hashPage();if(booted&&k!==page){page=k;render()}});
+function showLogin(){clearInterval(timer);const u=h("input",{placeholder:t("user"),autocomplete:"username"}),p=h("input",{type:"password",placeholder:t("pass"),autocomplete:"current-password"});
+ const go=async()=>{const r=await fetch(BASE+"login",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({username:u.value,password:p.value})});
+  const j=await r.json();if(j.success)boot();else toast(j.msg,1)};
+ p.addEventListener("keydown",e=>e.key==="Enter"&&go());
+ document.body.classList.add("lg");$root.replaceChildren(h("div",{class:"login card"},h("div",{class:"lo"},"🛡️"),h("h2",{},"VPN Lite"),h("p",{},"Panel"),u,p,h("button",{class:"btn p",style:"width:100%",onclick:go},t("login"))))}
+
+function shell(content){
+ const nav=PAGES.map(k=>h("a",{class:k===page?"on":"",onclick:()=>go(k)},h("b",{},ICON[k]),t(k)));
+ return h("div",{class:"app"},h("div",{class:"side"},h("h1",{},h("i",{},"🛡️"),ME.role==="agent"?(ME.agent.brand||ME.agent.username):"VPN Lite"),window.sideTop?sideTop():null,nav,h("hr"),
+  h("a",{onclick:()=>{lang=lang==="fa"?"en":"fa";localStorage.setItem("lang",lang);applyLook();render()}},t("lang")),
+  h("a",{onclick:()=>{theme=theme==="dark"?"light":"dark";localStorage.setItem("theme",theme);applyLook()}},t("theme")),
+  h("a",{onclick:async()=>{await fetch(BASE+"logout");ME={role:"admin"};showLogin()}},t("logout"))),
+  h("div",{class:"main"},window.shellTop?shellTop():null,h("div",{class:"mob"},PAGES.map(k=>h("a",{class:k===page?"on":"",onclick:()=>go(k)},t(k)))),content))}
+async function render(){document.body.classList.remove("lg");clearInterval(timer);const c=h("div");$root.replaceChildren(shell(c));
+ const fn=PAGEFN[page]||PAGEFN[PAGES[0]];
+ try{await fn(c)}catch(e){if(e.message!=="auth")console.error(e)}}
+function auto(fn,ms){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)fn().catch(()=>{})},ms)}
+
+/* ---------- dashboard ---------- */
+const fmtUp=x=>{x=Math.floor(x||0);const d=Math.floor(x/86400),hh=Math.floor(x%86400/3600),m=Math.floor(x%3600/60);return (d?d+"d ":"")+hh+"h "+m+"m"};
+async function doUpdate(){const j=await api("panel/ui/updateCheck");if(!j.success){toast(j.msg||"error",1);return}
+ const o=j.obj;if(!o.new){toast(t("uptodate")+" ("+o.current+")");return}
+ if(!confirm(t("updq")+" "+o.current+" → "+o.latest+" ?"))return;
+ toast(t("updating"));const r=await api("panel/ui/update",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+ if(!r.success){toast(r.msg||"error",1);return}toast(r.msg);setTimeout(()=>location.reload(),5000)}
+async function pDash(c){let agx=null;if(window.dashExtra)dashExtra().then(e=>{agx=e;if(e&&page==="dash"&&c.firstChild)c.firstChild.after(e)});
+ const draw=async()=>{const s=await call("panel/ui/summary");const st=s.status||{};inboundsCache=s.inbounds;
+  const sy=s.sys,pc=n=>Math.max(0,Math.min(100,n||0));
+  const jump=(pg,st)=>()=>{if(pg==="accounts"){AS.status=st||"";AS.q="";AS.inbound="";AS.page=1;AS.sel.clear()}go(pg)};
+  const box=(ic,col,l,body,go)=>h("div",{class:"card dc"+(go?" lk":""),style:"--c:"+col,onclick:go||null},h("div",{class:"dh"},h("span",{class:"di"},ic),h("span",{class:"dl"},l)),body);
+  const big=v=>h("div",{class:"dv num"},v);
+  const meter=(p,left,right)=>h("div",{},h("div",{class:"dm"},h("span",{},left),h("b",{class:"num"},Math.round(p)+"%")),h("div",{class:"bar"+(p>90?" hi":"")},h("i",{style:"width:"+pc(p)+"%"})),right?h("div",{class:"mu num",style:"margin-top:4px;font-size:11px"},right):null);
+  const two=(a,b)=>h("div",{class:"d2"},h("span",{class:"num"},"⬆ "+a),h("span",{class:"num"},"⬇ "+b));
+  c.replaceChildren(h("div",{class:"top"},h("h2",{},t("dash"))),agx||"",
+   h("div",{class:"dg"},
+    box("👥","#6366f1",t("accounts"),big(s.accounts),jump("accounts","")),box("🌐","#10b981",t("onlineu"),big(s.onlineUsers),jump("online")),box("✅","#3b82f6",t("active"),big(st.active||0),jump("accounts","active")),
+    box("🚫","#f59e0b",t("disabled"),big(st.disabled||0),jump("accounts","disabled")),box("📦","#ef4444",t("depleted"),big(st.depleted||0),jump("accounts","depleted")),box("📅","#ef4444",t("expired"),big(st.expired||0),jump("accounts","expired")),
+    box("💾","#10b981",t("disk"),meter(sy.disk,fmtB(sy.diskUsed||0),fmtB(sy.diskTotal||0))),
+    box("🧠","#06b6d4",t("cpu"),meter(sy.cpu,"Cores: "+(sy.cores||"-"),sy.load||"")),
+    box("🧮","#eab308","RAM",meter(sy.mem,fmtB(sy.memUsed||0),fmtB(sy.memTotal||0))),
+    box("⏱️","#ef4444",t("uptime"),big(fmtUp(sy.uptime))),
+    box("👤","#f59e0b",t("usertraffic"),h("div",{},big(fmtB(s.usedBytes)),two(fmtB(s.totalUp||0),fmtB(s.totalDown||0)))),
+    box("🖥️","#6366f1",t("servertraffic"),h("div",{},big(fmtB((sy.netRx||0)+(sy.netTx||0))),two(fmtB(sy.netTx||0),fmtB(sy.netRx||0)),h("div",{class:"mu num",style:"font-size:11px"},"↓ "+fmtB(sy.rxBps)+"/s  ↑ "+fmtB(sy.txBps)+"/s")))),
+   h("div",{class:"card",style:"display:flex;gap:8px;flex-wrap:wrap;align-items:center"},
+    h("span",{class:"mu",style:"flex:1;min-width:150px"},t("ver")+": "+(s.sys.version||"-")),
+    h("button",{class:"btn p",onclick:doUpdate},"⬆ "+t("update")),
+    h("button",{class:"btn",onclick:async()=>{if(!confirm(t("rstq")))return;await post("panel/ui/resetTotal");toast(t("saved"));draw()}},"↺ "+t("rsttotal")),
+    h("button",{class:"btn d",onclick:async()=>{if(!confirm(t("rebootq")))return;await post("panel/ui/reboot");toast(t("rebooting"));setTimeout(()=>location.reload(),60000)}},"⟲ "+t("reboot"))),
+   h("div",{class:"card sc"},h("table",{},h("tr",{},["remark","proto","port","members","online"].map(k=>h("th",{},t(k==="online"?"online":k)))),
+    s.inbounds.map(i=>h("tr",{},h("td",{},i.remark||("#"+i.id)),h("td",{},h("span",{class:"tag"},i.protocol)),h("td",{},i.port),h("td",{},i.members),h("td",{},i.online))))))};
+ await draw();auto(draw,5000)}
+
+/* ---------- accounts ---------- */
+const ib=(ic,label,fn,cls)=>h("button",{class:"ib"+(cls?" "+cls:""),title:label,onclick:fn},h("span",{class:"ic"},ic),h("span",{class:"lb"},label));
+const AS={q:"",status:"",inbound:"",owner:"",customer:"",sort:"name",page:1,size:50,sel:new Set()};
+async function pAccounts(c){
+ if(ME.role==="agent")inboundsCache=ME.services||[];else if(!inboundsCache.length)inboundsCache=(await call("panel/ui/summary")).inbounds;
+ const body=h("div"),bulk=h("div");
+ const q=h("input",{placeholder:t("search"),value:AS.q,oninput:e=>{AS.q=e.target.value;AS.page=1;clearTimeout(q._t);q._t=setTimeout(load,250)}});
+ const sel=(opts,key)=>h("select",{onchange:e=>{AS[key]=e.target.value;AS.page=1;load()}},opts.map(([v,l])=>h("option",{value:v,selected:String(AS[key])===String(v)},l)));
+ const topBtns=window.accTop?accTop(()=>load()):[h("button",{class:"btn p",onclick:()=>accountModal()},"+ "+t("add")),h("button",{class:"btn",onclick:bulkCreateModal},t("bulkc")),h("button",{class:"btn d",onclick:()=>delExpired(load)},"🗑 "+t("delexp"))];
+ const ownerSel=Object.keys(AGN).length?sel([["",t("allowners")],["0",t("adminown")],...Object.entries(AGN).map(([id,n])=>[id,"🏷 "+n])],"owner"):null;
+ c.replaceChildren(h("div",{class:"top"},h("h2",{},t("accounts")),topBtns),
+  h("div",{class:"row"},q,sel([["",t("all")],["active",t("active")],["expired",t("expired")],["depleted",t("depleted")],["disabled",t("disabled")],["online",t("online")]],"status"),
+   sel([["",t("inbounds")],...inboundsCache.map(i=>[i.id,i.remark||i.protocol])],"inbound"),ownerSel,
+   sel([["name",t("name")],["used",t("used")],["expiry",t("expiry")],["last",t("lastseen")]],"sort"),
+   sel([[25,25],[50,50],[100,100],[200,200]],"size")),bulk,body);
+ async function load(){const qp={q:AS.q,status:AS.status,inbound:AS.inbound,sort:AS.sort,page:AS.page,size:AS.size};if(AS.owner!=="")qp.owner=AS.owner;if(AS.customer)qp.customer=AS.customer;if(ME.role==="agent")qp.tree=1;
+  const r=await call("panel/ui/accounts?"+new URLSearchParams(qp));
+  const names=Object.fromEntries(inboundsCache.map(i=>[i.id,i.remark||i.protocol]));
+  const pages=Math.max(1,Math.ceil(r.total/r.size));
+  const all=h("input",{type:"checkbox",onchange:e=>{r.items.forEach(a=>e.target.checked?AS.sel.add(a.email):AS.sel.delete(a.email));load()}});
+  const go=n=>{AS.page=n;load()};
+  const pager=()=>{const b=(n,label,dis,cur)=>h("button",{class:"btn s"+(cur?" p":""),disabled:dis,onclick:()=>go(n)},label||n);
+   const s=Math.max(1,Math.min(AS.page-2,pages-4)),e=Math.min(pages,s+4),nums=[];
+   if(s>1){nums.push(b(1));if(s>2)nums.push(h("span",{class:"mu"},"…"))}
+   for(let n=s;n<=e;n++)nums.push(b(n,null,false,n===AS.page));
+   if(e<pages){if(e<pages-1)nums.push(h("span",{class:"mu"},"…"));nums.push(b(pages))}
+   return h("div",{class:"pg"},h("span",{class:"mu"},r.total+" "+t("accounts")),b(AS.page-1,"‹",AS.page<=1),...nums,b(AS.page+1,"›",AS.page>=pages))};
+  body.replaceChildren(pager(),h("div",{class:"card sc"},r.items.length?h("table",{},h("tr",{},h("th",{},all),["name","protocols","used","expiry","speed","online","enable","status",""].map(k=>h("th",{},k?t(k==="name"?"name":k):""))),
+   r.items.map(a=>{const pct=a.total?Math.min(100,(a.up+a.down)*100/a.total):0;
+    return h("tr",{},h("td",{},h("input",{type:"checkbox",checked:AS.sel.has(a.email),onchange:e=>{e.target.checked?AS.sel.add(a.email):AS.sel.delete(a.email);drawBulk()}})),
+     h("td",{},h("b",{},a.email),a.owner&&(ME.role==="admin"||a.owner!==ME.agent.id)?h("span",{class:"tag",style:"margin-inline-start:6px"},"🏷 "+(AGN[a.owner]||("#"+a.owner))):null,a.comment?h("div",{class:"mu"},a.comment):null),
+     h("td",{},a.inbounds.map(i=>h("span",{class:"tag"},names[i]||i)),a.singleProto&&a.inbounds.length>1?h("span",{class:"tag",title:t("single")},"①"):null),
+     h("td",{},h("div",{class:"num"},fmtB(a.up+a.down)+" / "+(a.total?fmtB(a.total):t("unl"))),a.total?h("div",{class:"bar"+(pct>90?" hi":"")},h("i",{style:"width:"+pct+"%"})):null),
+     h("td",{},fmtExp(a.expiry)),
+     h("td",{class:"mu"},h("span",{class:"num"},(a.speedDown?"↓"+a.speedDown:"")+" "+(a.speedUp?"↑"+a.speedUp:"")||"-")),
+     h("td",{},h("span",{class:"pill "+(a.online?"active":"disabled"),style:"white-space:nowrap"},a.online?"● "+t("online")+" "+a.online+"/"+(a.limitIp||"·"):t("offline"))),
+     h("td",{},h("input",{type:"checkbox",class:"sw",checked:a.enable,title:t("enable"),onchange:async e=>{const on=e.target.checked;try{await bulkOne(on?"enable":"disable",a.email);toast(t("saved"))}catch(x){toast(x.message,1)}load()}})),
+     h("td",{},h("span",{class:"pill "+a.status},t(a.status))),
+     h("td",{class:"ops"},
+      ib("🔗",t("link"),()=>infoModal(a)),
+      ib("↺",t("resetshort"),async()=>{if(!confirm(t("resetq")+"\n"+a.email))return;await bulkOne("reset",a.email);toast(t("saved"));load()}),
+      ib("⏏",t("kickshort"),async()=>{if(!a.online){toast(t("notonline"),1);return}const n=await post("panel/ui/kick?email="+encodeURIComponent(a.email));toast(n?t("kicked")+": "+n:t("notonline"),!n);if(n)setTimeout(load,700)},a.online?"":"off"),
+      window.accRowExtra?accRowExtra(a,()=>load()):null,
+      ib("✎",t("edit"),()=>accountModal(a)),
+      ib("🗑",t("del"),async()=>{if(!confirm(t("delq")+"\n"+a.email))return;await bulkOne("delete",a.email);toast(t("saved"));load()},"d")))
+   })):h("div",{class:"mu"},t("none"))),
+   pager());drawBulk()}
+ function drawBulk(){if(!AS.sel.size){bulk.replaceChildren();return}
+  const act=async(a,extra)=>{if(a==="delete"&&!confirm(t("confirm")))return;await post("panel/ui/bulk",{action:a,emails:[...AS.sel],...extra});toast(t("saved"));AS.sel.clear();load()};
+  const days=h("input",{type:"number",value:30,style:"width:70px"}),gb=h("input",{type:"number",value:0,style:"width:70px"});
+  bulk.replaceChildren(h("div",{class:"bar-sel"},AS.sel.size+" "+t("sel"),h("button",{class:"btn s",onclick:()=>act("enable")},t("enable")),h("button",{class:"btn s",onclick:()=>act("disable")},t("disable")),
+   h("button",{class:"btn s",onclick:()=>act("reset")},t("reset")),days,"d",gb,"GB",h("button",{class:"btn s",onclick:()=>act("extend",{days:+days.value,gb:+gb.value})},t("extend")),
+   h("button",{class:"btn s d",onclick:()=>act("delete")},t("del")),window.bulkExtra?bulkExtra([...AS.sel],()=>{AS.sel.clear();load()}):null,h("button",{class:"btn s",onclick:()=>{AS.sel.clear();load()}},"✕")))}
+ await load();auto(load,15000)}
+
+function modal(title,content,actions){const m=h("div",{class:"modal",onclick:e=>e.target===m&&m.remove()},h("div",{class:"card"},h("h3",{style:"margin-top:0"},title),content,h("div",{class:"row",style:"margin:14px 0 0;justify-content:flex-end"},actions)));document.body.append(m);return m}
+const field=(l,el)=>h("div",{class:"row"},h("label",{},l),el);
+function accountModal(a){const isNew=!a;a=a||{email:"",username:"",password:randpw(),enable:true,total:0,expiry:0,limitIp:0,speedDown:0,speedUp:0,reset:0,comment:"",inbounds:[],subId:"",singleProto:true};
+ const f={email:h("input",{value:a.email,disabled:!isNew}),pass:h("input",{value:a.password}),gb:h("input",{type:"number",step:"any",value:a.total?+(a.total/1073741824).toFixed(3):0}),
+  limit:h("input",{type:"number",value:a.limitIp}),dn:h("input",{type:"number",value:a.speedDown}),up:h("input",{type:"number",value:a.speedUp}),
+  reset:h("input",{type:"number",value:a.reset}),comment:h("input",{value:a.comment}),en:h("input",{type:"checkbox",checked:a.enable}),single:h("input",{type:"checkbox",checked:a.singleProto})};
+ const boxes=inboundsCache.map(i=>[i,h("input",{type:"checkbox",checked:a.inbounds.includes(i.id)})]);
+ const ed=expiryEditor(a.expiry);
+ const m=modal(isNew?t("add"):t("edit")+" — "+a.email,h("div",{},field(t("email"),f.email),field(t("pass"),f.pass),
+  field(t("protocols"),h("div",{style:"flex:1"},boxes.map(([i,b])=>h("label",{style:"display:block;width:auto;color:inherit"},b," ",i.remark||i.protocol," ",h("span",{class:"tag"},i.protocol))))),
+  field(t("total"),f.gb),field(t("expiry"),ed.el),field(t("limit"),f.limit),field(t("down"),f.dn),field(t("up"),f.up),field(t("resetd"),f.reset),field(t("comment"),f.comment),
+  field(t("single"),h("div",{style:"flex:1"},f.single,h("div",{class:"mu"},t("singleh")))),field(t("enable"),f.en)),[
+  h("button",{class:"btn",onclick:()=>m.remove()},t("cancel")),
+  h("button",{class:"btn p",onclick:async()=>{
+   const ids=boxes.filter(([i,b])=>b.checked).map(([i])=>i.id);if(!ids.length){toast(t("protocols"),1);return}
+   const expiry=ed.value();
+   const client={id:a.username||a.email||f.email.value.trim(),email:isNew?f.email.value.trim():a.email,enable:f.en.checked,limitIp:+f.limit.value||0,totalGB:Math.round((+f.gb.value||0)*1073741824),
+    expiryTime:expiry,tgId:0,subId:a.subId||"",comment:f.comment.value,reset:+f.reset.value||0,password:f.pass.value.trim(),speedLimitDown:+f.dn.value||0,speedLimitUp:+f.up.value||0,singleProto:f.single.checked};
+   if(isNew)client.id=client.email;
+   const p=new URLSearchParams();p.set("id",isNew?ids[0]:(a.inbounds&&a.inbounds[0])||ids[0]);p.set("settings",JSON.stringify({clients:[client]}));ids.forEach(i=>p.append("inboundIds",i));
+   const r=await fetch(BASE+"panel/api/inbounds/"+(isNew?"addClient":"updateClient/"+encodeURIComponent(a.password)),{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:p.toString()});
+   const j=await r.json();if(!j.success){toast(j.msg,1);return}toast(t("saved"));m.remove();render()}},t("save"))]);}
+const bulkOne=(a,e)=>post("panel/ui/bulk",{action:a,emails:[e]});
+function randpw(){const al="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";const b=crypto.getRandomValues(new Uint8Array(10));return [...b].map(x=>al[x%al.length]).join("")}
+function infoModal(a){const items=a.inbounds.map(id=>inboundsCache.find(q=>q.id===id)).filter(Boolean);
+ const host=x=>x.domain||location.hostname;
+ const blocks=items.map(x=>{const L=[];
+  if(x.protocol==="openvpn"){L.push("OpenVPN (UDP+TCP in one file, login included)",`file: ${location.origin}${BASE}panel/api/inbounds/${x.id}/ovpn/both?user=${encodeURIComponent(a.username)}`)}
+  else if(x.protocol==="openconnect"){L.push("Cisco AnyConnect",`server: ${host(x)}`,`port: ${x.port}`,`user: ${a.username}`,`pass: ${a.password}`)}
+  else{L.push("L2TP",`server: ${host(x)}`+(x.port!==1701?`:${x.port}`:""),`user: ${a.username}`,`pass: ${a.password}`);if(x.psk)L.push(`secret (PSK): ${x.psk}`)}
+  return {x,txt:L.join("\n")}});
+ const txt=blocks.map(b=>b.txt).join("\n\n");
+ const m=modal(a.email,h("div",{},blocks.map(b=>h("div",{style:"margin-bottom:8px"},h("pre",{},b.txt),
+   b.x.protocol==="openvpn"&&h("div",{},h("a",{class:"btn p",href:BASE+"panel/api/inbounds/"+b.x.id+"/ovpn/both?user="+encodeURIComponent(a.username)},"⬇ "+a.username+".ovpn"))))),
+  [h("button",{class:"btn",onclick:()=>{navigator.clipboard&&navigator.clipboard.writeText(txt);toast(t("copy"))}},t("copy")),h("button",{class:"btn",onclick:()=>m.remove()},t("cancel"))])}
+function bulkCreateModal(){const f={prefix:h("input",{value:"u"}),count:h("input",{type:"number",value:10}),gb:h("input",{type:"number",value:0}),days:h("input",{type:"number",step:"any",value:30}),hours:h("input",{type:"number",step:"any",value:0}),limit:h("input",{type:"number",value:0}),dn:h("input",{type:"number",value:0}),up:h("input",{type:"number",value:0}),single:h("input",{type:"checkbox",checked:true})};
+ const boxes=inboundsCache.map(i=>[i,h("input",{type:"checkbox"})]);
+ const m=modal(t("bulkc"),h("div",{},field(t("prefix"),f.prefix),field(t("count"),f.count),field(t("protocols"),h("div",{style:"flex:1"},boxes.map(([i,b])=>h("label",{style:"display:block;width:auto;color:inherit"},b," ",i.remark||i.protocol)))),
+  field(t("total"),f.gb),field(t("days"),f.days),field(t("hours"),f.hours),field(t("limit"),f.limit),field(t("down"),f.dn),field(t("up"),f.up),field(t("single"),f.single)),[
+  h("button",{class:"btn",onclick:()=>m.remove()},t("cancel")),
+  h("button",{class:"btn p",onclick:async()=>{const ids=boxes.filter(([i,b])=>b.checked).map(([i])=>i.id);if(!ids.length){toast(t("protocols"),1);return}
+   const r=await post("panel/ui/bulkCreate",{prefix:f.prefix.value,count:+f.count.value,inbounds:ids,gb:+f.gb.value,days:+f.days.value,hours:+f.hours.value||0,limitIp:+f.limit.value,speedDown:+f.dn.value,speedUp:+f.up.value,singleProto:f.single.checked});
+   m.remove();const txt=r.map(x=>x.User+"\t"+x.Pass).join("\n");const m2=modal(t("created")+" ("+r.length+")",h("pre",{},txt),[h("button",{class:"btn",onclick:()=>{navigator.clipboard&&navigator.clipboard.writeText(txt);toast(t("copy"))}},t("copy")),h("button",{class:"btn p",onclick:()=>{m2.remove();render()}},"OK")])}},t("save"))])}
+
+/* ---------- inbounds ---------- */
+async function delExpired(after){const j=await api("panel/ui/deleteExpired",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dry:true})});const n=j.obj||0;if(!n){toast(t("noexp"));return}
+ if(!confirm(t("delexpq").replace("{n}",n)))return;await post("panel/ui/deleteExpired",{});toast(t("saved"));if(after)after()}
+function opsModal(after){const run=async(f)=>{await f();toast(t("saved"));m.remove();after()};
+ const m=modal(t("ops"),h("div",{style:"display:flex;flex-direction:column;gap:8px"},
+  h("button",{class:"btn d",onclick:()=>{m.remove();delExpired(after)}},"🗑 "+t("delexp")),
+  h("button",{class:"btn",onclick:()=>{if(confirm(t("confirm")))run(()=>form("panel/api/inbounds/resetAllTraffics",{}))}},"↺ "+t("resetaccts")),
+  h("button",{class:"btn",onclick:()=>{if(confirm(t("confirm")))run(async()=>{for(const i of inboundsCache)await form("panel/ui/inboundReset/"+i.id,{})})}},"↺ "+t("resetsvc")),
+  h("button",{class:"btn",onclick:()=>{if(confirm(t("rstq")))run(()=>post("panel/ui/resetTotal"))}},"↺ "+t("rsttotal"))),
+  [h("button",{class:"btn",onclick:()=>m.remove()},t("cancel"))])}
+async function pInbounds(c){
+ let q="";
+ const draw=async()=>{const [list,s]=await Promise.all([call("panel/api/inbounds/list?light=1"),call("panel/ui/summary")]);
+  const by={};(s.inbounds||[]).forEach(x=>by[x.id]=x);const st=s.status||{};
+  inboundsCache=list.map(i=>{let o={};try{o=JSON.parse(i.settings||"{}")}catch(e){}return {id:i.id,remark:i.remark,protocol:i.protocol,port:i.port,domain:(o.connDomain||"").trim(),psk:(i.protocol==="l2tp"&&o.ipsecEnable!==false)?(o.ipsecPsk||""):""}});
+  const stat=(v,l)=>h("div",{class:"card stat",style:"--c:#6366f1"},h("b",{class:"num",style:"direction:ltr"},v),h("span",{},l));
+  const pill=(n,c,s2)=>h("span",{class:"pill "+c,style:s2||""},n);
+  const head=h("div",{class:"grid"},stat("↓ "+fmtB(s.totalDown||0)+"  ↑ "+fmtB(s.totalUp||0),t("rxtx")),stat(fmtB(s.usedBytes||0),t("totalused")),stat(list.length,t("totalin")),
+   h("div",{class:"card stat",style:"--c:#10b981"},h("div",{style:"display:flex;gap:6px;flex-wrap:wrap"},pill(s.accounts,"active"),pill(st.expired||0,"expired"),pill(s.onlineUsers||0,"","background:#3b82f633;color:#60a5fa")),h("span",{},t("users"))));
+  const rows=list.filter(i=>{const x=by[i.id]||{};const hay=((i.remark||"")+" "+i.protocol+" "+(x.domain||"")+" "+i.port).toLowerCase();return !q||hay.includes(q)}).map(i=>{
+   const x=by[i.id]||{};const dom=(x.domain||location.hostname)+":"+i.port;
+   const sw=h("input",{type:"checkbox",checked:i.enable,onchange:async()=>{const r=await form("panel/ui/inboundEnable/"+i.id,{enable:sw.checked?1:0});if(!r.success){toast(r.msg||"error",1);sw.checked=!sw.checked;return}toast(t("saved"));draw()}});
+   return h("tr",{},h("td",{},sw),
+    h("td",{},h("div",{},h("b",{},i.remark||("#"+i.id))),h("span",{class:"tag"},i.protocol)),
+    h("td",{style:"direction:ltr;white-space:nowrap"},dom," ",h("button",{class:"btn s",title:t("copy"),onclick:()=>{navigator.clipboard&&navigator.clipboard.writeText(dom);toast(t("copy"))}},"⧉")),
+    h("td",{style:"direction:ltr;white-space:nowrap"},h("div",{},fmtB((x.up||0)+(x.down||0))),h("div",{class:"mu"},"↓ "+fmtB(x.down||0)+"  ↑ "+fmtB(x.up||0))),
+    h("td",{},h("div",{},h("b",{},x.members||0)," ",t("accounts")),h("div",{style:"display:flex;gap:4px;flex-wrap:wrap"},pill(x.healthy||0,"active"),pill(x.expired||0,"expired"),pill(x.online||0,"","background:#3b82f633;color:#60a5fa"))),
+    h("td",{style:"white-space:nowrap"},i.protocol==="openvpn"&&h("a",{class:"btn s",href:BASE+"panel/api/inbounds/"+i.id+"/ovpn/both",title:".ovpn"},"⬇ "),h("button",{class:"btn s",onclick:()=>inboundModal(i)},t("edit"))))});
+  const search=h("input",{placeholder:t("search"),value:q,style:"max-width:240px",oninput:()=>{q=search.value.trim().toLowerCase();draw().then(()=>{const e=c.querySelector("input[placeholder]");e&&e.focus()})}});
+  c.replaceChildren(h("div",{class:"top"},h("h2",{},t("inbounds")),h("button",{class:"btn p",onclick:()=>inboundModal()},"+ "+t("newin")),h("button",{class:"btn",onclick:()=>opsModal(draw)},"⚙ "+t("ops")),search),
+   head,
+   h("div",{class:"card sc"},h("table",{},h("tr",{},["",t("remark"),t("addr"),t("traffic"),t("users"),""].map(k=>h("th",{},k))),rows)))};
+ await draw()}
+function inboundModal(i){const isNew=!i;const raw=i?JSON.parse(i.settings):{};delete raw.clients;
+ i=i||{id:0,remark:"",protocol:"openvpn",port:1194,listen:"",enable:true};
+ const proto=h("select",{disabled:!isNew,onchange:()=>{if(isNew){f.port.value={openvpn:1194,l2tp:1701,openconnect:443}[proto.value];sync()}}},["openvpn","l2tp","openconnect"].map(p=>h("option",{value:p,selected:i.protocol===p},p)));
+ const tcpSep=raw.separatePorts&&raw.tcpPort?raw.tcpPort:"";
+ const f={remark:h("input",{value:i.remark}),port:h("input",{type:"number",value:i.port}),tcp:h("input",{type:"number",value:tcpSep,placeholder:t("portudp")}),
+  udp:h("input",{type:"checkbox",checked:raw.udpEnable!==false}),ips:h("input",{type:"checkbox",checked:raw.ipsecEnable!==false}),mtu:h("input",{type:"number",value:raw.mtu||""}),dom:h("input",{value:raw.connDomain||"",placeholder:"vpn.example.com",dir:"ltr"}),psk:h("input",{value:raw.ipsecPsk||"",placeholder:t("psk"),autocomplete:"off"}),km:h("input",{type:"checkbox",checked:raw.kernelMode===true}),tcpOn:h("input",{type:"checkbox",checked:raw.tcpEnable!==false}),
+  listen:h("input",{value:i.listen||""}),en:h("input",{type:"checkbox",checked:i.enable}),adv:h("textarea",{rows:8,style:"width:100%;font-family:monospace;font-size:12px"})};
+ const rPort=field(t("portudp"),f.port),rTcp=field(t("porttcp"),f.tcp),rUdpOn=field(t("useudp"),f.udp),rTcpOn=field(t("usetcp"),f.tcpOn),rIps=field(t("ipsecon"),f.ips),rPsk=field(t("psk"),f.psk),rKm=field(t("kernl2tp"),h("div",{style:"flex:1"},f.km,h("div",{class:"mu"},t("kernl2tph")))),rDom=field(t("condom"),f.dom),rMtu=field("MTU",f.mtu);
+ const sslSt=h("div",{class:"mu",style:"margin:4px 0 8px;direction:ltr"},"");
+ const sslBtn=h("button",{class:"btn s",onclick:async()=>{const d=f.dom.value.trim();if(!d){toast(t("condomreq"),1);return}
+  sslBtn.disabled=true;sslSt.style.color="";sslSt.textContent="⏳ "+t("sslwait");
+  try{const j=await form("panel/ui/certIssue/"+i.id,{domain:d});sslSt.textContent=(j.success?"✅ ":"❌ ")+(j.msg||"");sslSt.style.color=j.success?"#16a34a":"#dc2626"}catch(e){sslSt.textContent="❌ "+e.message}
+  sslBtn.disabled=false}},t("getssl"));
+ const rSsl=h("div",{},sslBtn,sslSt);
+ if(!isNew&&i.protocol==="openconnect")api("panel/ui/certStatus/"+i.id).then(j=>{sslSt.textContent="🔒 "+(j.msg||"")}).catch(()=>{});const DM={openvpn:1350,l2tp:1280,openconnect:1420};
+ const lab=h("label",{});rPort.firstChild.replaceWith(lab);
+ function sync(){const p=proto.value;f.mtu.placeholder=String(DM[p]);lab.textContent=t(p==="openvpn"?"portudp":p==="l2tp"?"portl2":"portoc");
+  [rTcp,rUdpOn,rTcpOn].forEach(r=>r.style.display=p==="openvpn"?"":"none");[rIps,rPsk,rKm].forEach(r=>r.style.display=p==="l2tp"?"":"none");rSsl.style.display=(p==="openconnect"&&!isNew)?"":"none"}
+ const strip=o=>{const c={...o};["caKey","caCert","serverCert","serverKey","tlsCrypt","certificate","key","udpEnable","tcpEnable","tcpPort","separatePorts","ipsecEnable","ipsecPsk","connDomain","mtu","kernelMode"].forEach(k=>{delete c[k]});return c};
+ f.adv.value=JSON.stringify(strip(raw),null,1);
+ const m=modal(isNew?t("newin"):t("edit")+" — "+(i.remark||i.id),h("div",{},field(t("proto"),proto),field(t("remark"),f.remark),rPort,rUdpOn,rTcpOn,rTcp,rIps,rPsk,rKm,rDom,rSsl,rMtu,field(t("listen"),f.listen),field(t("enable"),f.en),
+  h("div",{class:"mu",style:"margin:8px 0 4px"},t("adv")+" — dns1, dns2, pool, userLimit, externalProxy:[{dest,port}]"),f.adv),[
+  !isNew&&h("button",{class:"btn d",onclick:async()=>{if(!confirm(t("confirm")))return;await form("panel/api/inbounds/del/"+i.id,{});m.remove();render()}},t("del")),
+  !isNew&&i.protocol!=="l2tp"&&h("button",{class:"btn",onclick:async()=>{if(!confirm(t("confirm")))return;await post("panel/ui/certs/"+i.id+"?cn="+encodeURIComponent(raw.connDomain||location.hostname));toast(t("saved"))}},t("gen")),
+  h("button",{class:"btn",onclick:()=>m.remove()},t("cancel")),
+  h("button",{class:"btn p",onclick:async()=>{let s;try{s=JSON.parse(f.adv.value||"{}")}catch(e){toast("JSON",1);return}
+   const base=isNew?{}:{...raw};
+   const merged={...base,...s};
+   merged.connDomain=f.dom.value.trim();{const mv=parseInt(f.mtu.value);if(mv>0)merged.mtu=mv;else delete merged.mtu}
+   if(proto.value==="l2tp"){merged.ipsecEnable=f.ips.checked;merged.ipsecPsk=f.psk.value.trim();merged.kernelMode=f.km.checked;
+    if(merged.ipsecEnable&&!merged.ipsecPsk){toast(t("pskreq"),1);return}}
+   if(isNew){const d={dns1:"8.8.8.8",dns2:"8.8.4.4"};
+    for(const k in d)if(merged[k]==null)merged[k]=d[k]}
+   if(proto.value==="openvpn"){merged.udpEnable=f.udp.checked;merged.tcpEnable=f.tcpOn.checked;
+    const tp=+f.tcp.value;if(tp>0&&tp!==+f.port.value){merged.separatePorts=true;merged.tcpPort=tp}else{merged.separatePorts=false;delete merged.tcpPort}}
+   const o={remark:f.remark.value,enable:f.en.checked,port:f.port.value,listen:f.listen.value,protocol:proto.value,settings:JSON.stringify({clients:[],...merged}),streamSettings:"{}",sniffing:"{}"};
+   const r=await form("panel/api/inbounds/"+(isNew?"add":"update/"+i.id),o);
+   if(!r.success){toast(r.msg,1);return}toast(t("saved"));m.remove();render()
+  }},t("save"))]);sync()}
+
+
+
+/* ---------- online / logs ---------- */
+async function pOnline(c){
+ let q="",size=50,page=1,data=[];
+ const body=h("div");
+ const qi=h("input",{placeholder:t("search"),oninput:e=>{q=e.target.value;page=1;paint()}});
+ const sz=h("select",{onchange:e=>{size=+e.target.value;page=1;paint()}},[25,50,100,200].map(n=>h("option",{value:n,selected:n===size},n)));
+ const draw=async()=>{const r=(await call("panel/ui/sessions"))||[];const m=new Map();
+  r.forEach(s=>{if(!m.has(s.Email))m.set(s.Email,[]);m.get(s.Email).push(s)});
+  data=[...m.entries()].map(([email,list])=>({email,list})).sort((a,b)=>a.email.localeCompare(b.email));paint()};
+ const paint=()=>{const f=data.filter(x=>!q||x.email.toLowerCase().includes(q.toLowerCase()));
+  const pages=Math.max(1,Math.ceil(f.length/size));if(page>pages)page=pages;const rows=f.slice((page-1)*size,page*size);
+  const kill=async(x)=>{await post("panel/ui/kick?email="+encodeURIComponent(x.email));setTimeout(draw,600)};
+  const one=async(s)=>{await post("panel/ui/kick?id="+encodeURIComponent(s.ID));setTimeout(draw,600)};
+  const nav=(label,to,dis)=>h("button",{class:"btn s",disabled:dis,onclick:()=>{page=to;paint()}},label);
+  body.replaceChildren(h("div",{class:"card sc"},f.length?h("table",{},h("tr",{},["#",t("email"),t("nsess"),t("proto"),t("ips"),""].map(k=>h("th",{},k))),
+    rows.map((x,i)=>h("tr",{},h("td",{class:"mu"},(page-1)*size+i+1),h("td",{},h("b",{},x.email)),
+     h("td",{},h("span",{class:"tag",style:"background:#3b82f6;color:#fff"},x.list.length)),
+     h("td",{},[...new Set(x.list.map(s=>s.Proto))].map(p=>h("span",{class:"tag"},p))),
+     h("td",{},x.list.map(s=>h("div",{style:"display:flex;align-items:center;gap:6px;margin:2px 0"},h("span",{class:"num"},s.SrcIP||"-"),
+       h("button",{class:"btn s d",title:t("kick"),onclick:()=>one(s)},"✕")))),
+     h("td",{},h("button",{class:"btn s",style:"background:#f59e0b;color:#fff;border-color:#f59e0b",onclick:()=>kill(x)},"⛔ "+t("killall")))))):h("div",{class:"mu"},t("none"))),
+   h("div",{class:"pg"},h("span",{class:"mu"},f.length+" "+t("online")),nav("‹",page-1,page<=1),h("span",{},page+" / "+pages),nav("›",page+1,page>=pages)))};
+ c.replaceChildren(h("div",{class:"top"},h("h2",{},t("online"))),h("div",{class:"row"},qi,sz),body);
+ await draw();auto(draw,5000)}
+async function pLogs(c){let email="",kind="";
+ const em=h("input",{placeholder:t("email"),oninput:e=>{email=e.target.value;clearTimeout(em._t);em._t=setTimeout(draw,250)}});
+ const kd=h("select",{onchange:e=>{kind=e.target.value;draw()}},["","connect","disconnect","reject","kick","expire","error","daemon","login-fail"].map(k=>h("option",{value:k},k||t("all"))));
+ const body=h("div");c.replaceChildren(h("div",{class:"top"},h("h2",{},t("logs"))),h("div",{class:"row"},em,kd),body);
+ async function draw(){const r=await call("panel/ui/events?"+new URLSearchParams({n:300,email,kind}));
+  body.replaceChildren(h("div",{class:"card sc"},h("table",{},h("tr",{},[t("time"),t("kind"),t("proto"),t("email"),t("detail")].map(x=>h("th",{},x))),
+   r.map(e=>h("tr",{},h("td",{class:"mu"},new Date(e.t).toLocaleTimeString()),h("td",{},h("span",{class:"tag"},e.kind)),h("td",{},e.proto),h("td",{},e.email),h("td",{},e.detail))))))}
+ await draw();auto(draw,5000)}
+
+/* ---------- settings ---------- */
+async function pSettings(c){const s=await call("panel/ui/settings");const g=s.global;
+ const f={st:h("select",{},[["evict",t("evict")],["reject",t("reject")]].map(([v,l])=>h("option",{value:v,selected:g.limitStrategy===v},l))),gr:h("input",{type:"number",value:g.evictGraceSec}),
+  bp:h("input",{value:g.basePath}),tc:h("input",{value:g.tlsCert||""}),tk:h("input",{value:g.tlsKey||""}),sm:h("input",{type:"number",value:g.sessionMinutes}),ds:h("input",{type:"checkbox",checked:g.defaultSingleProto}),amp:h("input",{type:"checkbox",checked:!!g.allowMultiProto}),ird:h("input",{type:"checkbox",checked:!!g.iranDirect}),dl:h("input",{type:"number",min:1,value:g.defaultLimit||1}),tt:h("input",{value:g.tgToken||"",placeholder:"123456:ABC...",dir:"ltr",autocomplete:"off"}),tg:h("input",{value:g.tgChat||"",placeholder:"123456789",dir:"ltr"}),th:h("input",{type:"number",min:0,value:g.tgBackupHours||0}),tl:h("input",{type:"checkbox",checked:!g.tgNoLogin}),tc2:h("input",{type:"number",min:0,max:100,value:g.tgCpuAlert||0})};
+ const saveAll=async()=>{await post("panel/ui/settings",{limitStrategy:f.st.value,evictGraceSec:+f.gr.value,defaultSingleProto:f.ds.checked,allowMultiProto:f.amp.checked,iranDirect:f.ird.checked,defaultLimit:+f.dl.value||1,basePath:f.bp.value,tlsCert:f.tc.value,tlsKey:f.tk.value,sessionMinutes:+f.sm.value,tgToken:f.tt.value,tgChat:f.tg.value,tgBackupHours:+f.th.value||0,tgNoLogin:!f.tl.checked,tgCpuAlert:+f.tc2.value||0});toast(t("saved"))};
+ const pw={u:h("input",{value:s.admin}),o:h("input",{type:"password"}),n:h("input",{type:"password"})};
+ const rf=h("input",{type:"file",accept:".json,.db,application/json",style:"display:none",onchange:async()=>{const f=rf.files[0];if(!f)return;if(!confirm(t("restoreconf")))return;
+   try{const r=await fetch(BASE+"panel/ui/restore",{method:"POST",headers:{"Content-Type":"application/octet-stream","X-Requested-With":"XMLHttpRequest"},body:await f.arrayBuffer()});const j=await r.json();toast(j.msg,!j.success)}catch(e){toast(e.message,1)}rf.value=""}});
+  const im={u:h("input",{placeholder:"https://old-host:2053/",dir:"ltr"}),n:h("input",{autocomplete:"off"}),p:h("input",{type:"password",autocomplete:"new-password"}),s:h("input",{type:"number",value:0}),e:h("input",{type:"checkbox"})};
+  c.replaceChildren(h("div",{class:"top"},h("h2",{},t("settings"))),
+  h("div",{class:"card",style:"margin-bottom:12px"},field(t("strategy"),f.st),field(t("grace"),f.gr),field(t("defsingle"),f.ds),field(t("allowmulti"),f.amp),field(t("deflimit"),f.dl),field("session (min)",f.sm),field(t("basep"),f.bp),field(t("tls"),f.tc),field(t("tlsk"),f.tk),
+   h("button",{class:"btn p",onclick:saveAll},t("save"))),
+  h("div",{class:"card",style:"margin-bottom:12px"},h("h3",{style:"margin-top:0"},"🧭 "+t("routing")),
+   field(t("irandirect"),h("div",{style:"flex:1"},f.ird,h("div",{class:"mu"},t("iranhelp")))),
+   h("button",{class:"btn p",onclick:saveAll},t("save"))),
+  h("div",{class:"card",style:"margin-bottom:12px"},h("h3",{style:"margin-top:0"},t("chpw")),field(t("user"),pw.u),field(t("oldpw"),pw.o),field(t("newpw"),pw.n),
+   h("button",{class:"btn p",onclick:async()=>{await post("panel/ui/password",{user:pw.u.value,old:pw.o.value,new:pw.n.value});toast(t("saved"));pw.o.value=pw.n.value=""}},t("save"))),
+  h("div",{class:"card",style:"margin-bottom:12px"},h("h3",{style:"margin-top:0"},"💾 "+t("bk")),
+   h("div",{class:"mu",style:"margin-bottom:10px"},t("bkhelp")),
+   h("a",{class:"btn p",href:BASE+"panel/ui/backup"},"⬇ "+t("backup"))," ",
+   h("button",{class:"btn",onclick:()=>rf.click()},"⬆ "+t("restore")),rf),
+  h("div",{class:"card",style:"margin-bottom:12px"},h("h3",{style:"margin-top:0"},"🤖 "+t("tgb")),
+   h("div",{class:"mu",style:"margin-bottom:10px"},t("tgbhelp")),
+   field(t("tgtoken"),f.tt),field(t("tgchat"),f.tg),field(t("tghours"),f.th),field(t("tglogin"),f.tl),field(t("tgcpu"),f.tc2),
+   h("button",{class:"btn p",onclick:saveAll},t("save"))," ",
+   h("button",{class:"btn",onclick:async()=>{try{await saveAll();await post("panel/ui/backupNow");toast(t("tgsent"))}catch(e){toast(e.message,1)}}},"📤 "+t("tgnow"))),
+  h("div",{class:"card"},h("button",{class:"btn d",onclick:async()=>{if(!confirm(t("confirm")))return;await post("panel/ui/restart");toast("…");setTimeout(()=>location.reload(),3500)}},t("restart"))))}
+
+function loadAgency(){return new Promise(res=>{const run=async()=>{try{if(window.agencySetup)await agencySetup()}catch(e){console.error(e)}res()};if(window.agencySetup)return run();
+ const s=document.createElement("script");s.src=BASE+"agency.js?v="+encodeURIComponent(ME.version||"");s.onload=run;s.onerror=()=>res();document.head.append(s)})}
+async function boot(){try{const j=await api("panel/agency/whoami");
+  if(j&&j.success){ME=j.obj;await loadAgency()}else{ME={role:"admin"};if(ME.role==="admin")await call("panel/ui/summary")}
+  booted=true;page=hashPage();if(!location.hash)history.replaceState(null,"","#/"+page);render()}catch(e){if(e.message!=="auth")console.error(e)}}
+boot();
+</script>
+</body>
+</html>
