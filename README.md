@@ -7,7 +7,7 @@ Repository: <https://github.com/PouryaDe/LitePanel>
 ## Install (any Debian/Ubuntu server)
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/PouryaDe/LitePanel/main/install.sh) --port 2096
+bash <(curl -fsSL https://raw.githubusercontent.com/PouryaDe/LitePanel/main/install.sh) --port 8443
 ```
 
 It installs the daemons (without starting them), downloads the binary from [GitHub Releases](https://github.com/PouryaDe/LitePanel/releases), creates the `vpn-lite` systemd service, makes a self-signed HTTPS certificate (or issues a Let's Encrypt certificate if `--domain` is provided) and prints the admin password. Run it again (or run `vl` on the server) to open the management menu or update: only the panel restarts, tunnels stay up.

@@ -83,7 +83,7 @@ func setup(args []string) error {
 		g.Port = *port
 	}
 	if g.Port == 0 {
-		g.Port = 2096
+		g.Port = 8443
 	}
 	if *base != "" {
 		b := *base
@@ -278,7 +278,7 @@ func info(args []string) error {
 	defer st.mu.RUnlock()
 	port := st.st.Global.Port
 	if port == 0 {
-		port = 2096
+		port = 8443
 	}
 	fmt.Printf("panel port: %d  base path: %s\n", port, st.st.Global.BasePath)
 	return nil

@@ -168,7 +168,7 @@ ask_login() { # fills USER_ PASS PORT when empty
       echo "too short, try again"
     done
   fi
-  if [ -z "$PORT" ]; then ask "Panel port [2096]: " 2096; PORT="$REPLY"; fi
+  if [ -z "$PORT" ]; then ask "Panel port [8443]: " 8443; PORT="$REPLY"; fi
 }
 
 valid_port() { [[ "$1" =~ ^[0-9]+$ ]] && [ "$1" -ge 1 ] && [ "$1" -le 65535 ]; }
@@ -230,7 +230,7 @@ panel_url() {
   pp="$("$BIN" info 2>/dev/null | sed -n 's/^panel port: \([0-9]*\).*/\1/p' | tail -1)"
   dom="$(cat "$DOMAIN_FILE" 2>/dev/null || true)"
   host="${dom:-$(curl -4fsS --max-time 6 https://api.ipify.org 2>/dev/null || echo '<server-ip>')}"
-  echo "https://$host:${pp:-2096}/"
+  echo "https://$host:${pp:-8443}/"
 }
 
 # ---------------------------------------------------------------- actions
